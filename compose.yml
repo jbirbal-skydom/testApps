@@ -1,0 +1,21 @@
+services:
+  qemu:
+    container_name: linux-ubuntu
+    image: qemux/qemu-docker
+    environment:
+      RAM_SIZE: "16G"
+      CPU_CORES: "8"
+      BOOT_MODE: "uefi"
+      HOST_PORTS: "22"
+      BOOT: /mnt/f/OS_Intalled/docker/iso/debian-12.5.0-amd64-netinst.iso
+    volumes:
+      - /mnt/f/OS_Intalled/docker/iso/debian-12.5.0-amd64-netinst.iso:/boot.iso
+      - /mnt/f/OS_Intalled/docker:/storage
+    devices:
+      - /dev/kvm
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 2223:22
+    stop_grace_period: 2m
