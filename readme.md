@@ -1,4 +1,6 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+
+<!-- markdownlint-disable MD033 MD041 -->
 <a name="readme-top"></a>
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
@@ -7,8 +9,6 @@
 *** Don't forget to give the project a star!
 *** Thanks again! Now go create something AMAZING! :D
 -->
-
-
 
 <!-- PROJECT SHIELDS -->
 <!--
@@ -25,12 +25,10 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
+  <a href="https://github.com/jbirbal-skydom/testApps">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -39,18 +37,16 @@
   <p align="center">
     project_description
     <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/jbirbal-skydom/testApps"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    <a href="https://github.com/jbirbal-skydom/testApps">View Demo</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
+    <a href="https://github.com/jbirbal-skydom/testApps/issues">Report Bug</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+    <a href="https://github.com/jbirbal-skydom/testApps/issues">Request Feature</a>
   </p>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -78,8 +74,6 @@
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
 ## Boilerplate App Development for iOS and Android
 
@@ -87,14 +81,11 @@
 
 A streamlined setup for developing iOS and Android boilerplate apps.
 
-
 This repository provides a detailed guide to set up development environments for creating boilerplate iOS and Android applications using Docker. For iOS, it includes the setup of a MacOS instance using Docker-OSX with installations of Xcode and Rust. For Android, it outlines setting up a Debian instance via QEMU-Docker, along with installations of Android Studio and Rust.
 
- `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+ `jbirbal-skydom`, `testApps`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
 
 [back to top](#readme-top)
-
-
 
 ### Built With
 
@@ -148,7 +139,7 @@ This is an example of how to list things you need to use the software and how to
       1. Rust Do not work
    2. 13.x : Bad graphics very buggy and crashed on GUI but still has the processing power.
       [X] Rust Works
-      []  Electron do not ( some applications will not show `Safari`) 
+      []  Electron do not ( some applications will not show `Safari`)
    3. 14.x : Unknown
       1. Teamviewer or Anydesk crashes the system
 
@@ -229,7 +220,7 @@ This is an example of how to list things you need to use the software and how to
 3. Emulation
    1. Graphical and Hardware Acceleration: Android emulators often require direct access to hardware acceleration features (like Intel HAXM or AMD-V) and graphical output, which WSL2 does not fully support.
    2. install Java
-      1. Selecting the Correct JBR Version:
+      1. Selecting the Correct [JBR] Version:
          1. JBR (vanilla): This is the standard version of JBR without extra features like JCEF. It's typically sufficient for most development needs unless you specifically need browser integration within Java applications.
          2. JBR with JCEF (fastdebug): Includes JCEF and is built with additional debugging support. This version is useful if you need to embed a web browser in your Java applications and require extensive debugging capabilities.
          3. JBRSDK: This likely includes development tools and SDK components, making it a good choice if you are looking for a comprehensive development setup.
@@ -252,7 +243,7 @@ This is an example of how to list things you need to use the software and how to
          2. Add the following Path  entries:\
             1. `%ANDROID_HOME%\cmdline-tools\latest\bin`
             2. `%ANDROID_HOME%\platform-tools`
-   5. Install `sdkmanager` and `avdmanager` that is included in the [Command Line Tools] 
+   5. Install `sdkmanager` and `avdmanager` that is included in the [Command Line Tools]
       1. unzp to `C:\Android\cmdline-tools`
       2. add to path `C:\Android\cmdline-tools\bin>`
    6. SDK:
@@ -300,11 +291,9 @@ net start winnat
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://example.com)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+[back to top](#readme-top)
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -314,9 +303,9 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 * [ ] Feature 3
   * [ ] Nested Feature
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/jbirbal-skydom/testApps/issues) for a full list of proposed features (and known issues).
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+[back to top](#readme-top)
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -332,53 +321,45 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+[back to top](#readme-top)
 
 <!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+[back to top](#readme-top)
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - [jbirbal@zoho.com]
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/jbirbal-skydom/testApps](https://github.com/jbirbal-skydom/testApps)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+[back to top](#readme-top)
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
+<!-- * []()
 * []()
-* []()
-* []()
+* []() -->
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+[back to top](#readme-top)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/jbirbal-skydom/testApps.svg?style=for-the-badge
+[contributors-url]: https://github.com/jbirbal-skydom/testApps/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/jbirbal-skydom/testApps.svg?style=for-the-badge
+[forks-url]: https://github.com/jbirbal-skydom/testApps/network/members
+[stars-shield]: https://img.shields.io/github/stars/jbirbal-skydom/testApps.svg?style=for-the-badge
+[stars-url]: https://github.com/jbirbal-skydom/testApps/stargazers
+[issues-shield]: https://img.shields.io/github/issues/jbirbal-skydom/testApps.svg?style=for-the-badge
+[issues-url]: https://github.com/jbirbal-skydom/testApps/issues
+[license-shield]: https://img.shields.io/github/license/jbirbal-skydom/testApps.svg?style=for-the-badge
+[license-url]: https://github.com/jbirbal-skydom/testApps/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
@@ -403,4 +384,4 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 
 [Platform-Tools]: https://developer.android.com/tools/releases/platform-tools
 [Command Line Tools]: https://developer.android.com/studio#cmdline-tools
-[JDK]: https://www.oracle.com/java/technologies/downloads/#java11
+[JBR]: https://github.com/JetBrains/JetBrainsRuntime
