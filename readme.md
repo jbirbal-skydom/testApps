@@ -92,7 +92,7 @@ This repository provides a detailed guide to set up development environments for
 
  `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+[back to top](#readme-top)
 
 
 
@@ -107,9 +107,7 @@ This repository provides a detailed guide to set up development environments for
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 * [![JQuery][JQuery.com]][JQuery-url]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+[back to top](#readme-top)
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -155,7 +153,7 @@ This is an example of how to list things you need to use the software and how to
       1. Teamviewer or Anydesk crashes the system
 
    ```sh
-    docker run -it     --device /dev/kvm     -p 50922:10022     -v "${PWD}/running/mac_hdd_ng_13-2-1_XCode-.img:/image"     -v /tmp/.X11-unix:/tmp/.X11-unix     -e "DISPLAY=${DISPLAY:-:0.0}"     -v "${PWD}/run_scripts/Launch.sh:/home/arch/OSX-KVM/Launch.sh"     -v "${PWD}/run_scripts/LaunchReal.sh:/home/arch/LaunchReal.sh"     -e RAM=28     -e AUDIO_DRIVER="id=none,driver=none"   -e EXTRA='-smp 16,sockets=1,cores=8,threads=2'     sickcodes/docker-osx:naked
+    docker run -it     --device /dev/kvm     -p 50922:10022     -v "${PWD}/running/mac_hdd_ng(14.0_FullDev).img:/image"     -v /tmp/.X11-unix:/tmp/.X11-unix     -e "DISPLAY=${DISPLAY:-:0.0}"     -v "${PWD}/run_scripts/Launch.sh:/home/arch/OSX-KVM/Launch.sh"     -v "${PWD}/run_scripts/LaunchReal.sh:/home/arch/LaunchReal.sh"     -e RAM=28     -e AUDIO_DRIVER="id=none,driver=none"   -e EXTRA='-smp 16,sockets=1,cores=8,threads=2'  -e CPU='Haswell-noTSX'   -e CPUID_FLAGS='kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on'    sickcodes/docker-osx:naked
    ```
 
 3. Copy / download Xcode 12 for the latest compatible version for Catalina. *Apple changed the MacOS graphics engine in Big Sur*
@@ -185,6 +183,7 @@ This is an example of how to list things you need to use the software and how to
    2. Android studio
       1. Download
       2. Install NDK
+      3. Simulator do not work becasue the CPU passthorugh will not allow
 
    3. Rust
       1. Download
@@ -216,15 +215,81 @@ This is an example of how to list things you need to use the software and how to
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+#### Android Development using WSL (BEST)
 
+1. Download Adroid studio
+   1. uncompress
+   2. ad to .bashrc `alias android-studio="$HOME/Applications/android-studio/bin/studio.sh"`
+
+2. Edit the /etc/profile
+   1. sudo chown <USERNAME> /etc/profile
+   2. `code /etc/profile`
+   3. add `export ANDROID_SDK_ROOT=/home/skydom/Android/Sdk` and `PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools`
+
+3. Emulation
+   1. Graphical and Hardware Acceleration: Android emulators often require direct access to hardware acceleration features (like Intel HAXM or AMD-V) and graphical output, which WSL2 does not fully support.
+   2. install Java
+      1. Selecting the Correct JBR Version:
+         1. JBR (vanilla): This is the standard version of JBR without extra features like JCEF. It's typically sufficient for most development needs unless you specifically need browser integration within Java applications.
+         2. JBR with JCEF (fastdebug): Includes JCEF and is built with additional debugging support. This version is useful if you need to embed a web browser in your Java applications and require extensive debugging capabilities.
+         3. JBRSDK: This likely includes development tools and SDK components, making it a good choice if you are looking for a comprehensive development setup.
+         4. JBRSDK (fastdebug): Similar to the JBRSDK but with enhanced debugging capabilities. Not necessary unless you are troubleshooting complex issues in the JDK itself.
+         5. JBRSDK with JCEF: Includes both the development tools and the Chromium Embedded Framework. It's more than you need for standard Android SDK management tasks.
+      2. Given your needs (command line usage for Android SDK management), the JBR (vanilla) or JBRSDK would be suitable.
+      3. Extract Java at  `C:\Program Files\Java\jbr-17.0.11`
+      4. Enter `JAVA_HOME` as the `variable name` and the path to your Java JDK directory as the variable value (e.g., C:\Program Files\Java\jbr-17.0.11).
+      5. Update `PATH`:
+         1. `Path` variable and add `%JAVA_HOME%\bin`.
+      6. `java -version`
+   3. install SDK [Platform-Tools]
+      1. Extract the Downloaded File:
+         1. After downloading, extract the zip file to a directory of your choice, preferably one without space characters in the path (e.g., C:\Android\platform-tools).
+      2. Set Up Environment Variables:
+         1. Select the Path variable and add the path to the platform-tools folder
+      3. Verify the Installation `adb version`
+   4. Add SDK Variable
+         1. Enter ANDROID_HOME as the variable name and the path to your Android SDK directory as the variable value (e.g., C:\Users\<Your-Username>\AppData\Local\Android\Sdk).
+         2. Add the following Path  entries:\
+            1. `%ANDROID_HOME%\cmdline-tools\latest\bin`
+            2. `%ANDROID_HOME%\platform-tools`
+   5. Install `sdkmanager` and `avdmanager` that is included in the [Command Line Tools] 
+      1. unzp to `C:\Android\cmdline-tools`
+      2. add to path `C:\Android\cmdline-tools\bin>`
+   6. SDK:
+      1. `sdkmanager "platforms;android-29"`
+      2. Variable name: `ANDROID_SDK_ROOT` Variable value: `C:\Android`
+   7. Create emulation:
+      1. `sdkmanager "system-images;android-29;default;x86"`
+      2. `avdmanager create avd -n myAVD -k "system-images;android-29;default;x86"`
+      3. `emulator -avd myAVD`
+      4. `adb devices`
+   8. edit settings for emulation:
+      1. `C:\Users\<YourUsername>\.android\avd\<AVDName>.avd\`
+      2. Fix boot:
+
+         ```js
+         fastboot.forceChosenSnapshotBoot = no
+         fastboot.forceColdBoot = yes
+         fastboot.forceFastBoot = no
+         ```
+
+      3. Fix Keys:
+
+         ```js
+         hw.keyboard = yes
+         hw.mainKeys = no
+         hw.dPad = no
+         ```
+
+      4. Save
+
+[back to top](#readme-top)
 
 ## Notes
 
 ### Port issues
 
 `(HTTP code 500) server error - Ports are not available: exposing port TCP 0.0.0.0:50922 -> 0.0.0.0:0: listen tcp 0.0.0.0:50922: bind: An attempt was made to access a socket in a way forbidden by its access permissions.`
-
 
 ```sh
 net stop winnat
@@ -244,16 +309,14 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+* [ ] Feature 1
+* [ ] Feature 2
+* [ ] Feature 3
+  * [ ] Nested Feature
 
 See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -334,4 +397,10 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[JQuery-url]: https://jquery.com
+
+<!-- links -->
+
+[Platform-Tools]: https://developer.android.com/tools/releases/platform-tools
+[Command Line Tools]: https://developer.android.com/studio#cmdline-tools
+[JDK]: https://www.oracle.com/java/technologies/downloads/#java11
