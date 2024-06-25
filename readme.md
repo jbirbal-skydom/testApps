@@ -206,18 +206,41 @@ This is an example of how to list things you need to use the software and how to
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     ```
 
-#### Android Development using WSL (BEST)
+#### Android Development using [WSL] (BEST)
 
-1. Download Adroid studio
+1. Update WSL `.wslconfig` [mirror-git]
+   1. [mirror]:
+
+      ```sh
+      [wsl2]
+      memory=10GB
+      dnsTunneling=true
+      autoProxy=true
+      networkingMode=mirrored
+
+      [experimental]
+      autoMemoryReclaim=gradual
+      sparseVhd=true
+      hostAddressLoopback=true
+      useWindowsDnsCache=true
+      bestEffortDnsParsing=true
+      ```
+
+2. Download Android studio
    1. uncompress
-   2. ad to .bashrc `alias android-studio="$HOME/Applications/android-studio/bin/studio.sh"`
+   2. add to setting - tool/terminal `"C:\Users\skydom\AppData\Local\Microsoft\WindowsApps\CanonicalGroupLimited.Ubuntu22.04LTS_79rhkp1fndgsc\ubuntu2204.exe"`
+   3. `sudo adduser skydom kvm`
+   4. sdk location: `/mnt/c/Android`
 
-2. Edit the /etc/profile
+3. Edit the /etc/profile
    1. sudo chown <USERNAME> /etc/profile
-   2. `code /etc/profile`
-   3. add `export ANDROID_SDK_ROOT=/home/skydom/Android/Sdk` and `PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools`
+   2. `code /etc/profile` or `~/.bashrc`
+      1. `export ANDROID_HOME=/mnt/c/Android/`
+      2. `WSLENV=ANDROID_HOME/p`
+      3. `alias android-studio="$HOME/Applications/android-studio/bin/studio.sh"`
+      <!-- 3. `PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools` -->
 
-3. Emulation
+4. Emulation
    1. Graphical and Hardware Acceleration: Android emulators often require direct access to hardware acceleration features (like Intel HAXM or AMD-V) and graphical output, which WSL2 does not fully support.
    2. install Java
       1. Selecting the Correct [JBR] Version:
@@ -249,10 +272,12 @@ This is an example of how to list things you need to use the software and how to
    6. SDK:
       1. `sdkmanager "platforms;android-29"`
       2. Variable name: `ANDROID_SDK_ROOT` Variable value: `C:\Android`
-   7. Create emulation:
+   7. Create emulation in windows:
       1. `sdkmanager "system-images;android-29;default;x86"`
       2. `avdmanager create avd -n myAVD -k "system-images;android-29;default;x86"`
       3. `emulator -avd myAVD`
+         1. the emulator needs to be from the win binary (you might need to install it from sdk maanger and copy it over later)
+         2. `avdmanager delete avd -n myAVD`
       4. `adb devices`
    8. edit settings for emulation:
       1. `C:\Users\<YourUsername>\.android\avd\<AVDName>.avd\`
@@ -273,10 +298,92 @@ This is an example of how to list things you need to use the software and how to
          ```
 
       4. Save
+   9. Make the rust library
+      1. Create a new library and set up the target:
+
+         ``` rust
+         cargo new --lib your_rust_library
+         ```
+
+         ``` rust
+         rustup target add armv7-linux-androideabi
+         rustup target add aarch64-linux-android
+         rustup target add i686-linux-android
+         ```
+
+         ``` rust
+         [lib]
+         crate-type = ["cdylib"]
+         ```
+
+         ``` rust
+         cargo build --target armv7-linux-androideabi --release
+         ```
+
+         ```rust
+         #[no_mangle]
+         pub extern "C" fn add_numbers(a: i32, b: i32) -> i32 {
+            a + b
+         }
+         ```
+
+         1. Load library
+            * In your Android app, use `System.loadLibrary("your_rust_library_name_without_lib_prefix");` to load the Rust library.
+
+            ```java
+            public native int addNumbers(int a, int b);
+            ```
+
+      2. Target
+
+         ```sh
+         echo 'export ANDROID_NDK_HOME=/mnt/c/Android/ndk/27.0.11902837' >> ~/.bashrc
+         source ~/.bashrc
+         cargo ndk -t x86_64 build
+         ```
+
+#### IOS Development using [Hackintosh] (BEST)
+
+Creating a hackintosh is easy.
+
+1. Check Compatibility:
+   * hardware components are compatible with macOS. Key components include the CPU, GPU, network adapter, and audio chipset. Not all hardware is supported natively by macOS, which can require additional kexts (kernel extensions) or patches.
+2. Gather Necessary Files:
+   1. You'll need several files to create a Hackintosh:
+   * **OpenCore bootloader:** Download the latest version
+   * **macOS Installer**: Download from a Mac or using tools that fetch macOS directly from Apple servers.
+   * **Proper kexts**: These are necessary for enabling everything from audio to network functionality.
+   * **SSDTs**: Custom SSDTs may be needed for things like power management.
+   * **Config.plist**: This is the configuration file for OpenCore, crucial for the setup.
+3. Create a Bootable USB Drive:
+   * `Rufus` with the `GPT` `FAT32` and `non-boot` option
+4. Configure BIOS Settings:
+   * Disable Secure Boot.
+   * Disable CSM (Compatibility Support Module)
+   * Enable AHCI.
+   * Disable Fast Boot and VT-d (if not needed).
+   * Adjust other settings as recommended by the OpenCore guide for your specific CPU architecture.
+5. Edit the config.plist File: (ProperTree)
+   * This step is critical. Use a tool like ProperTree to edit your config.plist according to your specific hardware. You'll likely need to find a guide or an existing config.plist for HP ProBooks or similar hardware setups. Pay careful attention to settings like Kernel -> Quirks, ACPI, and DeviceProperties.
+6. Install macOS:
+   * Boot from the USB drive, format the internal drive using Disk Utility during the macOS setup, and install macOS.
+7. Post-Installation:
+   1. After installing macOS, you might need to:
+   * Transfer OpenCore and all necessary kexts and SSDTs to the EFI partition of your internal drive.
+   * Install additional drivers or software for full functionality.
+   * Run updates with caution, as they can break your Hackintosh setup.
+8. Troubleshooting:
+   * enable debug>target `67`
+   * Verbose Mode `NVRAM -> Add -> 7C436110-AB2A-4BBB-A880-FE41995C9F82` :
+     * -> `boot-args` : `-v`
+     * -> `prev-lang:kbd` : `<>`
+   * DisplayLevel
 
 [back to top](#readme-top)
 
 ## Notes
+
+Native code is better since it will integrate with rust easier.
 
 ### Port issues
 
@@ -385,3 +492,7 @@ Project Link: [https://github.com/jbirbal-skydom/testApps](https://github.com/jb
 [Platform-Tools]: https://developer.android.com/tools/releases/platform-tools
 [Command Line Tools]: https://developer.android.com/studio#cmdline-tools
 [JBR]: https://github.com/JetBrains/JetBrainsRuntime
+[WSL]: https://stackoverflow.com/questions/60166965/adb-device-list-empty-using-wsl2
+[mirror]: https://medium.com/@akbarimo/developing-react-native-with-expo-android-emulators-on-wsl2-linux-subsystem-ad5a8b0fa23c
+[mirror-git]: https://github.com/expo/expo/issues/26110
+[Hackintosh]: https://dortania.github.io/OpenCore-Multiboot/

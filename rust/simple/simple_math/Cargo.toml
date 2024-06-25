@@ -1,0 +1,21 @@
+[package]
+name = "simple_math"
+version = "0.1.0"
+edition = "2021"
+
+# Specify default features, typically none, to ensure no unwanted features are included by default
+[features]
+default = []
+android = []
+
+# Conditional dependency for the JNI crate, only included for builds that enable the `android` feature
+[dependencies]
+jni = { version = "0.21.1", optional = true }
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = { version = "0.21.1", optional = false } # Ensure JNI is included for Android
+
+[lib]
+name = "simple_math"
+# This creates both a static library and a shared library depending on the target
+crate-type = ["cdylib", "staticlib"]
