@@ -342,42 +342,49 @@ This is an example of how to list things you need to use the software and how to
          cargo ndk -t x86_64 build
          ```
 
+   10. Make the android project
+       1. The android project should not be names with `snake_case`. The symbols for `jni` converts `.` to `_`
+
 #### IOS Development using [Hackintosh] (BEST)
 
-Creating a hackintosh is easy.
-
-1. Check Compatibility:
-   * hardware components are compatible with macOS. Key components include the CPU, GPU, network adapter, and audio chipset. Not all hardware is supported natively by macOS, which can require additional kexts (kernel extensions) or patches.
-2. Gather Necessary Files:
-   1. You'll need several files to create a Hackintosh:
-   * **OpenCore bootloader:** Download the latest version
-   * **macOS Installer**: Download from a Mac or using tools that fetch macOS directly from Apple servers.
-   * **Proper kexts**: These are necessary for enabling everything from audio to network functionality.
-   * **SSDTs**: Custom SSDTs may be needed for things like power management.
-   * **Config.plist**: This is the configuration file for OpenCore, crucial for the setup.
-3. Create a Bootable USB Drive:
-   * `Rufus` with the `GPT` `FAT32` and `non-boot` option
-4. Configure BIOS Settings:
-   * Disable Secure Boot.
-   * Disable CSM (Compatibility Support Module)
-   * Enable AHCI.
-   * Disable Fast Boot and VT-d (if not needed).
-   * Adjust other settings as recommended by the OpenCore guide for your specific CPU architecture.
-5. Edit the config.plist File: (ProperTree)
-   * This step is critical. Use a tool like ProperTree to edit your config.plist according to your specific hardware. You'll likely need to find a guide or an existing config.plist for HP ProBooks or similar hardware setups. Pay careful attention to settings like Kernel -> Quirks, ACPI, and DeviceProperties.
-6. Install macOS:
-   * Boot from the USB drive, format the internal drive using Disk Utility during the macOS setup, and install macOS.
-7. Post-Installation:
-   1. After installing macOS, you might need to:
-   * Transfer OpenCore and all necessary kexts and SSDTs to the EFI partition of your internal drive.
-   * Install additional drivers or software for full functionality.
-   * Run updates with caution, as they can break your Hackintosh setup.
-8. Troubleshooting:
-   * enable debug>target `67`
-   * Verbose Mode `NVRAM -> Add -> 7C436110-AB2A-4BBB-A880-FE41995C9F82` :
-     * -> `boot-args` : `-v`
-     * -> `prev-lang:kbd` : `<>`
-   * DisplayLevel
+1. Creating a hackintosh
+   1. Check Compatibility:
+      * hardware components are compatible with macOS. Key components include the CPU, GPU, network adapter, and audio chipset. Not all hardware is supported natively by macOS, which can require additional kexts (kernel extensions) or patches.
+   2. Gather Necessary Files:
+      1. You'll need several files to create a Hackintosh:
+      * **OpenCore bootloader:** Download the latest version
+      * **macOS Installer**: Download from a Mac or using tools that fetch macOS directly from Apple servers.
+      * **Proper kexts**: These are necessary for enabling everything from audio to network functionality.
+      * **SSDTs**: Custom SSDTs may be needed for things like power management.
+      * **Config.plist**: This is the configuration file for OpenCore, crucial for the setup.
+   3. Create a Bootable USB Drive:
+      * `Rufus` with the `GPT` `FAT32` and `non-boot` option
+   4. Configure BIOS Settings:
+      * Disable Secure Boot.
+      * Disable CSM (Compatibility Support Module)
+      * Enable AHCI.
+      * Disable Fast Boot and VT-d (if not needed).
+      * Adjust other settings as recommended by the OpenCore guide for your specific CPU architecture.
+   5. Edit the config.plist File: (ProperTree)
+      * This step is critical. Use a tool like ProperTree to edit your config.plist according to your specific hardware. You'll likely need to find a guide or an existing config.plist for HP ProBooks or similar hardware setups. Pay careful attention to settings like Kernel -> Quirks, ACPI, and DeviceProperties.
+   6. Install macOS:
+      * Boot from the USB drive, format the internal drive using Disk Utility during the macOS setup, and install macOS.
+   7. Post-Installation:
+      1. After installing macOS, you might need to:
+      * Transfer OpenCore and all necessary kexts and SSDTs to the EFI partition of your internal drive.
+      * Install additional drivers or software for full functionality.
+      * Run updates with caution, as they can break your Hackintosh setup.
+   8. Troubleshooting:
+      * enable debug>target `67`
+      * Verbose Mode `NVRAM -> Add -> 7C436110-AB2A-4BBB-A880-FE41995C9F82` :
+        * -> `boot-args` : `-v`
+        * -> `prev-lang:kbd` : `<>`
+      * DisplayLevel
+2. IDE framworks
+   1. Install rust
+      1. `rustup target add aarch64-apple-ios x86_64-apple-ios`
+      2. `cargo build --target x86_64-apple-ios --release`
+   2. Install xcode
 
 [back to top](#readme-top)
 

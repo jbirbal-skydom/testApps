@@ -47,7 +47,7 @@ class NativeLib {
         // Call the Rust function here.
         // This requires setting up Rust to work with Swift.
         // For example, you might use FFI to call a Rust function.
-        return add_numbers(a, b)
+        return Int(add_numbers(Int32(a), Int32(b)))
     }
 }
 

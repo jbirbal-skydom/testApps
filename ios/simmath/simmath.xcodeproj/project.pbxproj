@@ -14,6 +14,7 @@
 		4AA6467C2C2A97D000713C7B /* simmathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA6467B2C2A97D000713C7B /* simmathTests.swift */; };
 		4AA646862C2A97D000713C7B /* simmathUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA646852C2A97D000713C7B /* simmathUITests.swift */; };
 		4AA646882C2A97D000713C7B /* simmathUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA646872C2A97D000713C7B /* simmathUITestsLaunchTests.swift */; };
+		4AA646952C2BE75E00713C7B /* libsimple_math.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA646942C2BE75D00713C7B /* libsimple_math.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,8 @@
 		4AA646812C2A97D000713C7B /* simmathUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = simmathUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AA646852C2A97D000713C7B /* simmathUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = simmathUITests.swift; sourceTree = "<group>"; };
 		4AA646872C2A97D000713C7B /* simmathUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = simmathUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4AA646942C2BE75D00713C7B /* libsimple_math.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsimple_math.a; path = "../../../rust/simple/simple_math/target/x86_64-apple-ios/debug/libsimple_math.a"; sourceTree = "<group>"; };
+		4AA646962C2BE9F400713C7B /* simmath-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "simmath-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AA646952C2BE75E00713C7B /* libsimple_math.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +79,7 @@
 		4AA6465D2C2A97CD00713C7B = {
 			isa = PBXGroup;
 			children = (
+				4AA646962C2BE9F400713C7B /* simmath-Bridging-Header.h */,
 				4AA646682C2A97CD00713C7B /* simmath */,
 				4AA6467A2C2A97D000713C7B /* simmathTests */,
 				4AA646842C2A97D000713C7B /* simmathUITests */,
@@ -95,6 +100,7 @@
 		4AA646682C2A97CD00713C7B /* simmath */ = {
 			isa = PBXGroup;
 			children = (
+				4AA646942C2BE75D00713C7B /* libsimple_math.a */,
 				4AA646692C2A97CD00713C7B /* simmathApp.swift */,
 				4AA6466B2C2A97CD00713C7B /* ContentView.swift */,
 				4AA6466D2C2A97D000713C7B /* Assets.xcassets */,
@@ -349,11 +355,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "/Users/skydom/Desktop/testApps/rust/simple/simple_math/target/x86_64-apple-ios/debug/";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OBJC_BRIDGING_HEADER = "simmath-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -404,10 +413,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = "/Users/skydom/Desktop/testApps/rust/simple/simple_math/target/x86_64-apple-ios/debug/";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "";
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "simmath-Bridging-Header.h";
 			};
 			name = Release;
 		};
