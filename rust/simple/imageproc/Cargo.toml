@@ -1,20 +1,43 @@
 [package]
-name = "imageproc"
+name = "imgproc"
 version = "0.1.0"
 edition = "2021"
 
 [features]
 default = []
-android = []
+android = ["jni"]
 
 # Conditional dependency for the JNI crate, only included for builds that enable the `android` feature
 [dependencies]
+libc =  "0.2.80"
 jni = { version = "0.21.1", optional = true }
 
 [target.'cfg(target_os = "android")'.dependencies]
 jni = { version = "0.21.1", optional = false } # Ensure JNI is included for Android
 
+
 [lib]
-name = "simpleImgProc"
+name = "imgproc"
 # This creates both a static library and a shared library depending on the target
-crate-type = ["cdylib", "staticlib"]
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[[bin]]
+name = "vecutil"
+path = "src/binary/main.rs"
+
+[[bin]]
+name = "bitmaputil"
+path = "src/binary/bitmap.rs"
+ 
+#  The  Cargo.toml  file is the configuration file for the project. It contains metadata about the project, dependencies, and features. 
+#  The  [package]  section contains metadata about the project, such as the name, version, and edition. 
+#  The  [features]  section defines features that can be enabled or disabled when building the project. 
+#  The  [dependencies]  section lists the dependencies required by the project. In this case, we have two dependencies:  libc  and  jni . The  jni  dependency is optional and is only included when the  android  feature is enabled. 
+#  The  [target.'cfg(target_os = "android")'.dependencies]  section specifies dependencies that are only included when building for Android. In this case, we include the  jni  dependency for Android builds. 
+#  The  [lib]  section specifies the name of the library and the crate types to build. In this case, we build both a static library and a shared library. 
+#  The  [[bin]]  section specifies the name and path of the binary executable. In this case, the binary is named  imageproc  and the source code is located in  src/main.rs . 
+#  Step 3: Create the Rust Library 
+#  Next, we'll create the Rust library that contains the image processing functions. 
+#  Create a new directory named  src  in the project root directory. 
+#  Inside the  src  directory, create a new file named  lib.rs . 
+#  Add the following code to the  lib.rs  file:
