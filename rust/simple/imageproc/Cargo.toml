@@ -6,11 +6,14 @@ edition = "2021"
 [features]
 default = []
 android = ["jni"]
+with_image_util = ["image"]  # Enable the image crate when this feature is active
+
 
 # Conditional dependency for the JNI crate, only included for builds that enable the `android` feature
 [dependencies]
 libc =  "0.2.80"
 jni = { version = "0.21.1", optional = true }
+image = { version = "0.25.1", optional = true }
 
 [target.'cfg(target_os = "android")'.dependencies]
 jni = { version = "0.21.1", optional = false } # Ensure JNI is included for Android
@@ -19,15 +22,19 @@ jni = { version = "0.21.1", optional = false } # Ensure JNI is included for Andr
 [lib]
 name = "imgproc"
 # This creates both a static library and a shared library depending on the target
-crate-type = ["cdylib", "staticlib", "rlib"]
+crate-type = ["cdylib", "staticlib", "rlib"] #ribs are rust libraries that are needed for the binary 
 
 [[bin]]
 name = "vecutil"
 path = "src/binary/main.rs"
+required-features = ["with_image_util"]  # This binary requires the `with_image_util` feature
+
 
 [[bin]]
 name = "bitmaputil"
 path = "src/binary/bitmap.rs"
+required-features = ["with_image_util"]  # This binary requires the `with_image_util` feature
+
  
 #  The  Cargo.toml  file is the configuration file for the project. It contains metadata about the project, dependencies, and features. 
 #  The  [package]  section contains metadata about the project, such as the name, version, and edition. 

@@ -11,9 +11,9 @@ fn main() {
                           0, 0, 255,   // Blue pixel
                           255, 255, 0]; // Yellow pixel
 
-    unsafe {
+
         process_image(image_data.as_mut_ptr(), width, height);
-    }
+    
 
     println!("Processed Image Data:");
     for i in image_data.iter() {
