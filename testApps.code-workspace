@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"name": "testApps",
+			"path": "."
+		},
+		{
+			"name": "simple_math",
+			"path": "rust/simple/simple_math"
+		},
+		{
+			"name": "android",
+			"path": "android"
+		},
+		{
+			"path": "rust/simple/imageproc"
+		}
+	]
+}
