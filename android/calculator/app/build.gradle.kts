@@ -30,12 +30,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//    }
     buildFeatures {
         compose = true
     }
@@ -47,9 +47,20 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    buildToolsVersion = "34.0.0"
+    buildToolsVersion = "35.0.0"
     ndkVersion = "27.0.11902837 rc2"
 }
+
+//tasks.register("printNdkLocation") {
+//    doLast {
+//        val ndkDir = android.ndkDirectory
+//        if (ndkDir != null) {
+//            println("NDK Location: ${ndkDir.absolutePath}")
+//        } else {
+//            println("NDK is not configured.")
+//        }
+//    }
+//}
 
 dependencies {
 
