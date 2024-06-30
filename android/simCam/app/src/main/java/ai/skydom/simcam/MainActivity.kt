@@ -42,7 +42,9 @@ import java.util.concurrent.Executors
 
 private lateinit var cameraExecutor: ExecutorService
 
+
 class MainActivity : ComponentActivity() {
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -66,16 +68,45 @@ class MainActivity : ComponentActivity() {
     private lateinit var cameraPreview: PreviewView
     private lateinit var processedImageView: ImageView
     private lateinit var captureButton: Button
+    private lateinit var imageAnalysis: ImageAnalysis
+
+    private fun setupImageAnalysis() {
+        imageAnalysis = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+            .also {
+                it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
+                    val buffer = image.planes[0].buffer
+                    val procBuffer = NativeLib().procimage(buffer, image.width, image.height)
+                    // val processedBitmap = byteBufferToBitmap(procBuffer, image.width, image.height)
+                    runOnUiThread {
+                        //processedImageView.setImageBitmap(processedBitmap)
+                    }
+                    image.close()
+                })
+            }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
         cameraPreview = findViewById(R.id.camera_preview)
         processedImageView = findViewById(R.id.processed_image)
         captureButton = findViewById(R.id.button_capture)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        // Setting up the button click listener
+        setupImageAnalysis()
+        captureButton.setOnClickListener {
+            // Call a function or perform an action when the button is clicked
+            captureAndProcessImage()
+        }
+
+
 
 
         enableEdgeToEdge()
@@ -98,6 +129,13 @@ class MainActivity : ComponentActivity() {
             startCamera()
         }
     }
+    private var processNextImage = false
+    private fun captureAndProcessImage() {
+        // Implement functionality to capture and process the image here
+        // This could invoke the camera capture, process the image, and then display it
+        Toast.makeText(this, "Capture button clicked!", Toast.LENGTH_SHORT).show()
+        processNextImage = true
+    }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -116,16 +154,30 @@ class MainActivity : ComponentActivity() {
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
-                        // Image processing logic here
-                        val buffer = image.planes[0].buffer
-                        val processedBuffer = NativeLib().procimage(buffer, image.width, image.height)
-                        val processedBitmap = byteBufferToBitmap(processedBuffer, image.width, image.height)
-
-                        runOnUiThread {
-                            processedImageView.setImageBitmap(processedBitmap)
+                        if (processNextImage) {
+                            val buffer = image.planes[0].buffer
+                            val processedBuffer = NativeLib().procimage(buffer, image.width, image.height)
+                            //val processedBitmap = byteBufferToBitmap(processedBuffer, image.width, image.height)
+                            runOnUiThread {
+                                // processedImageView.setImageBitmap(processedBitmap)
+                            }
+                            processNextImage = false
                         }
                         image.close()
                     })
+
+
+//                    it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
+//                        // Image processing logic here
+//                        val buffer = image.planes[0].buffer
+//                        val processedBuffer = NativeLib().procimage(buffer, image.width, image.height)
+//                        //val processedBitmap = byteBufferToBitmap(processedBuffer, image.width, image.height)
+//
+//                        runOnUiThread {
+//                            //processedImageView.setImageBitmap(processedBitmap)
+//                        }
+//                        image.close()
+//                    })
                 }
 
             try {
@@ -217,6 +269,7 @@ class NativeLib {
     }
 
     // Declare a native method
-    external fun procimage(input: ByteBuffer, width: Int, height: Int): ByteBuffer
+    external fun procimage(input: ByteBuffer, width: Int, height: Int)//: ByteBuffer
 }
+
 
