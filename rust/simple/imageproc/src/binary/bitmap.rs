@@ -1,22 +1,21 @@
-// use std::ptr;
+use image;
+use imgproc; // Import your library
 
-// Assuming the function signature from your library
+use image::{ImageBuffer, RgbImage};
 use imgproc::process_image;
 
 fn main() {
-    let width = 2;
-    let height = 2;
-    let mut image_data = [255, 0, 0,   // Red pixel
-                          0, 255, 0,   // Green pixel
-                          0, 0, 255,   // Blue pixel
-                          255, 255, 0]; // Yellow pixel
+    let img_path = "D:\\Coding\\git\\testApps\\images\\logo.png"; // Specify the path to your image
+    let mut img = image::open(img_path).unwrap().to_rgb8(); // Open and convert the image to RGB8
 
+    let (width, height) = img.dimensions();
+    let raw_img = img.as_mut();
+    let buffer = raw_img.as_mut_ptr();
 
-        process_image(image_data.as_mut_ptr(), width, height);
-    
-
-    println!("Processed Image Data:");
-    for i in image_data.iter() {
-        print!("{} ", i);
+    unsafe {
+        process_image(buffer, width as i32, height as i32);
     }
+
+    img.save("D:\\Coding\\git\\testApps\\images\\processed_image.png").unwrap(); // Save the processed image
+    println!("Image processed and saved successfully.");
 }
