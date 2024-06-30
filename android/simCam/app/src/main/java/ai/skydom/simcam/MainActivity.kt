@@ -213,7 +213,7 @@ fun byteBufferToBitmap(buffer: ByteBuffer, width: Int, height: Int): Bitmap {
 class NativeLib {
     // Load the native library where the native methods are implemented
     init {
-        System.loadLibrary("simpleImgProc")
+        System.loadLibrary("imgproc")
     }
 
     // Declare a native method
