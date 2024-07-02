@@ -202,17 +202,7 @@ class MainActivity : ComponentActivity() {
                     this, cameraSelector, preview, imageAnalysis
                 )
 
-                // Listen for the layout to be completed
-//                cameraPreview.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-//                    override fun onGlobalLayout() {
-//                        // Ensure we only call it once
-//                        cameraPreview.viewTreeObserver.removeOnGlobalLayoutListener(this)
-//
-//                        val aspectRatio = getAspectRatio(camera.cameraInfo.sensorRotationDegrees, cameraPreview.width, cameraPreview.height)
-//                        Log.d("CameraSetup", "Aspect Ratio - $aspectRatio:1")
-//                        updateLayoutParams(aspectRatio)
-//                    }
-//                })
+
 
             } catch (exc: Exception) {
                 // Handle exceptions, e.g., camera binding failed
