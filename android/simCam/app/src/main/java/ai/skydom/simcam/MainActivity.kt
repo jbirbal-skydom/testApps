@@ -101,10 +101,13 @@ class MainActivity : ComponentActivity() {
                         val planes = image.planes
                         val buffer = planes[0].buffer
                         buffer.rewind()  // Ensure the buffer is at the beginning
-                        val rotatedBitmap = rotateBitmapFromBuffer(buffer, image.width, image.height, image.imageInfo.rotationDegrees)
 
                         if (processNextImage) {
                             runOnUiThread {
+                                val rgbaBuffer  = NativeLib().procimage(buffer, image.width, image.height)
+                                logPixelValues(rgbaBuffer, image.width, image.height)
+                                val rotatedBitmap = rotateBitmapFromBuffer(rgbaBuffer, image.width, image.height, image.imageInfo.rotationDegrees)
+
                                 processedImageView.setImageBitmap(rotatedBitmap)
                             }
                             processNextImage = false
@@ -150,11 +153,11 @@ class MainActivity : ComponentActivity() {
 
 
         enableEdgeToEdge()
+        //        set the aspect ratio
         val sizes = findCameraResolutionCamera2(this)
         val aspectRatio = Size(4, 3)  // Example desired aspect ratio
         val optimalSize = chooseOptimalSize(sizes, aspectRatio)
         Log.d("CameraSetup", "Optimal Size: ${optimalSize.width}x${optimalSize.height}")
-//        set the aspect ratio
 //        val aspectRatio = getAspectRatio(camera.cameraInfo.sensorRotationDegrees, cameraPreview.width, cameraPreview.height)
 //        Log.d("CameraSetup", "Aspect Ratio - $aspectRatio:1")
         updateLayoutParams(aspectRatio)
@@ -322,7 +325,7 @@ class NativeLib {
     }
 
     // Declare a native method
-    external fun procimage(yBuffer: ByteBuffer, uBuffer: ByteBuffer, vBuffer: ByteBuffer,width: Int, height: Int): ByteBuffer
+    external fun procimage(input: ByteBuffer, width: Int, height: Int): ByteBuffer
 }
 
 
@@ -397,10 +400,10 @@ fun logPixelValues(buffer: ByteBuffer, width: Int, height: Int) {
     for ((x, y) in positions) {
         val index = (y * width + x) * 4  // Calculate the byte index for pixel (x, y), assuming RGBA format
         if (index < buffer.limit() - 4) {  // Ensure the index is within the buffer limit
-            val r = buffer.get(index + 1).toInt() and 0xFF
-            val g = buffer.get(index + 2).toInt() and 0xFF
-            val b = buffer.get(index + 3).toInt() and 0xFF
-            val a = buffer.get(index).toInt() and 0xFF  // Alpha is usually the first byte in RGBA
+            val r = buffer.get(index + 0).toInt() and 0xFF
+            val g = buffer.get(index + 1).toInt() and 0xFF
+            val b = buffer.get(index + 2).toInt() and 0xFF
+            val a = buffer.get(index + 3).toInt() and 0xFF  // Alpha is usually the first byte in RGBA
             Log.d("PixelValues", "Pixel at ($x, $y): RGBA($r, $g, $b, $a)")
         } else {
             Log.d("PixelValues", "Pixel at ($x, $y) is out of bounds")
@@ -420,10 +423,10 @@ fun logBitmapPixels(bitmap: Bitmap) {
 
     positions.forEach { (x, y) ->
         val pixel = bitmap.getPixel(x, y)
-        val a = (pixel shr 24) and 0xff  // Alpha component
-        val r = (pixel shr 16) and 0xff  // Red component
-        val g = (pixel shr 8) and 0xff   // Green component
-        val b = pixel and 0xff          // Blue component
+        val r = (pixel shr 24) and 0xff  // Alpha component
+        val g = (pixel shr 16) and 0xff  // Red component
+        val b = (pixel shr 8) and 0xff   // Green component
+        val a = pixel and 0xff          // Blue component
         Log.d("BitmapPixels", "Pixel at ($x, $y): ARGB($a, $r, $g, $b)")
     }
 }

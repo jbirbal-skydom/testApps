@@ -13,15 +13,17 @@
 			"path": "android"
 		},
 		{
-			"path": "rust/simple/imageproc"
+			"path": "rust/simple/imageproc",
+			"name": "imageproc",
+			"settings": {
+		
+				"rust-analyzer.cargo.features": ["android"],
+				"rust-analyzer.cargo.cfgs": {
+					"target_os": "android",
+				}
+			
+		}
 		}
 	],
-	"settings": {
-		
-			"rust-analyzer.cargo.features": ["android"],
-			"rust-analyzer.cargo.cfgs": {
-				"target_os": "android",
-			}
-		
-	}
+
 }
