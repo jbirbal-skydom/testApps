@@ -32,15 +32,23 @@ import android.content.Context
 import androidx.camera.view.PreviewView
 //convert to image
 import android.graphics.Bitmap
+import android.graphics.ImageFormat
 import android.graphics.Matrix
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+import android.hardware.camera2.params.StreamConfigurationMap
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Size
+import android.view.ViewTreeObserver
 //import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.constraintlayout.widget.ConstraintLayout
 import java.io.FileOutputStream
 import java.nio.ByteOrder
 
@@ -142,6 +150,14 @@ class MainActivity : ComponentActivity() {
 
 
         enableEdgeToEdge()
+        val sizes = findCameraResolutionCamera2(this)
+        val aspectRatio = Size(4, 3)  // Example desired aspect ratio
+        val optimalSize = chooseOptimalSize(sizes, aspectRatio)
+        Log.d("CameraSetup", "Optimal Size: ${optimalSize.width}x${optimalSize.height}")
+//        set the aspect ratio
+//        val aspectRatio = getAspectRatio(camera.cameraInfo.sensorRotationDegrees, cameraPreview.width, cameraPreview.height)
+//        Log.d("CameraSetup", "Aspect Ratio - $aspectRatio:1")
+        updateLayoutParams(aspectRatio)
 
 
 
@@ -165,6 +181,7 @@ class MainActivity : ComponentActivity() {
         cameraProviderFuture.addListener(Runnable {
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             val preview = Preview.Builder()
                 .build()
@@ -181,13 +198,89 @@ class MainActivity : ComponentActivity() {
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
-                    this, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalysis)
+                val camera = cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview, imageAnalysis
+                )
+
+                // Listen for the layout to be completed
+//                cameraPreview.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+//                    override fun onGlobalLayout() {
+//                        // Ensure we only call it once
+//                        cameraPreview.viewTreeObserver.removeOnGlobalLayoutListener(this)
+//
+//                        val aspectRatio = getAspectRatio(camera.cameraInfo.sensorRotationDegrees, cameraPreview.width, cameraPreview.height)
+//                        Log.d("CameraSetup", "Aspect Ratio - $aspectRatio:1")
+//                        updateLayoutParams(aspectRatio)
+//                    }
+//                })
+
             } catch (exc: Exception) {
                 // Handle exceptions, e.g., camera binding failed
                 Log.e("CameraXApp", "Use case binding failed", exc)
             }
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    fun findCameraResolutionCamera2(context: Context): Array<Size> {
+        val manager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        val outputSizes = mutableListOf<Size>()
+        try {
+            for (cameraId in manager.cameraIdList) {
+                val characteristics = manager.getCameraCharacteristics(cameraId)
+                val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                map?.getOutputSizes(ImageFormat.JPEG)?.let {
+                    outputSizes.addAll(it)
+                    it.forEach { size ->
+                        Log.i("CameraSetup", "Available resolution: ${size.width}x${size.height}")
+                    }
+                }
+            }
+        } catch (e: CameraAccessException) {
+            Log.e("CameraSetup", "Exception occurred: ${e.message}")
+        }
+        return outputSizes.toTypedArray()
+    }
+
+    private fun updateLayoutParams(aspectRatio: Size) {
+        val layoutParams = cameraPreview.layoutParams as ConstraintLayout.LayoutParams
+
+        // Calculate the aspect ratio as a float for comparison
+        val ratioValue = aspectRatio.width.toFloat() / aspectRatio.height
+        Log.d("CameraSetup", "Aspect Ratio - $ratioValue:1")
+
+        // Set the dimension ratio string based on the aspect ratio
+        layoutParams.dimensionRatio = if (ratioValue >= 1f) {
+            // Horizontal (width is greater than or equal to height)
+            "H,${aspectRatio.width}:${aspectRatio.height}"
+        } else {
+            // Vertical (height is greater than width)
+            "V,${aspectRatio.width}:${aspectRatio.height}"
+        }
+
+        cameraPreview.layoutParams = layoutParams
+        cameraPreview.requestLayout() // Force a layout update to apply the new constraints
+    }
+
+    fun chooseOptimalSize(sizes: Array<Size>, aspectRatio: Size): Size {
+        // Convert the aspect ratio to a comparable integer value to simplify matching
+        val desiredRatio = aspectRatio.width * 100 / aspectRatio.height
+        return sizes.filter { size ->
+            val ratio = size.width * 100 / size.height
+            ratio == desiredRatio
+        }.maxByOrNull { it.width * it.height } ?: sizes.first()  // Choose the largest matching size, or the first size if no match is found
+    }
+
+    private fun getAspectRatio(rotationDegrees: Int, width: Int, height: Int): Float {
+        if (width == 0 || height == 0) {
+            Log.e("CameraSetup", "Invalid width ($width) or height ($height)")
+            return 1f // default to square aspect ratio to avoid division by zero
+        }
+        val isLandscape = rotationDegrees == 90 || rotationDegrees == 270
+        return if (isLandscape) {
+            width.toFloat() / height
+        } else {
+            height.toFloat() / width
+        }
     }
 
 
@@ -358,3 +451,6 @@ fun rotateBitmapFromBuffer(buffer: ByteBuffer, width: Int, height: Int, rotation
     // Returning a new bitmap rotated using the matrix
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
+
+
+

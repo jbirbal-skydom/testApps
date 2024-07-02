@@ -3,4 +3,6 @@
     <string name="camera_preview">Camera Preview</string>
     <string name="processed_image">Processed Image</string>
     <string name="capture">Capture Image</string>
+    <string name="reset">matrix</string>
+
 </resources>
