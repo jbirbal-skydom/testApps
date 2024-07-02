@@ -32,11 +32,13 @@ import android.content.Context
 import androidx.camera.view.PreviewView
 //convert to image
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 //import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import java.io.FileOutputStream
@@ -83,19 +85,24 @@ class MainActivity : ComponentActivity() {
     private fun setupImageAnalysis() {
         imageAnalysis = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888) // Assuming RGBA output
             .build()
-            .also {
-                it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
-                    val yBuffer = image.planes[0].buffer
-                    val uBuffer = image.planes[1].buffer
-                    val vBuffer = image.planes[2].buffer
+            .also { analysis ->
+                analysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
+                    try {
+                        val planes = image.planes
+                        val buffer = planes[0].buffer
+                        buffer.rewind()  // Ensure the buffer is at the beginning
+                        val rotatedBitmap = rotateBitmapFromBuffer(buffer, image.width, image.height, image.imageInfo.rotationDegrees)
 
-                    val argbBuffer  = NativeLib().procimage(yBuffer,uBuffer, vBuffer, image.width, image.height)
-                    val bitmap = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
-                    argbBuffer.rewind()  // Ensure this before copyPixelsFromBuffer
-                    bitmap.copyPixelsFromBuffer(argbBuffer)
-                    runOnUiThread {
-                        processedImageView.setImageBitmap(bitmap)
+                        if (processNextImage) {
+                            runOnUiThread {
+                                processedImageView.setImageBitmap(rotatedBitmap)
+                            }
+                            processNextImage = false
+                        }
+                    } catch (e: Exception) {
+                        Log.e("ImageAnalysis", "Error processing image", e)
                     }
                     image.close()
                 })
@@ -135,16 +142,7 @@ class MainActivity : ComponentActivity() {
 
 
         enableEdgeToEdge()
-//        setContent {
-//            SimcamTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Greeting(
-//                        name = "Android",
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
-//            }
-//        }
+
 
 
         // Check if permissions are already granted, if not, request them
@@ -174,73 +172,9 @@ class MainActivity : ComponentActivity() {
                     it.setSurfaceProvider(cameraPreview.surfaceProvider)
                 }
 
-            val imageAnalysis = ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
-                        if (processNextImage) {
-
-                            val yBuffer = image.planes[0].buffer
-                            val uBuffer = image.planes[1].buffer
-                            val vBuffer = image.planes[2].buffer
-
-                            val width = 640
-                            val height = 480
-
-                            val pixels = IntArray(width * height)
-
-                            val argbBuffer  = NativeLib().procimage(yBuffer,uBuffer, vBuffer, image.width, image.height)
-                            val bitmap = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
-                            // rgbBuffer.order(ByteOrder.LITTLE_ENDIAN)  // Adjust based on your data's endianness
-                            argbBuffer.rewind()  // Ensure the buffer is at the start
-//                            for (i in 0 until argbBuffer.capacity()) {
-//                                if (i % 4 == 0) {
-//                                    val a = argbBuffer.get(i).toInt() and 0xFF
-//                                    val r = argbBuffer.get(i+1).toInt() and 0xFF
-//                                    val g = argbBuffer.get(i+2).toInt() and 0xFF
-//                                    val b = argbBuffer.get(i+3).toInt() and 0xFF
-//                                    Log.d("DetailedPixelCheck", "Pixel ${i/4}: ARGB($a, $r, $g, $b)")
-//                                }
-//                            }
-                            // Assuming you have a method to fill this pixels array correctly from your buffer
-                            fillPixelsArray(pixels, argbBuffer)
-                            // Set the pixels to the bitmap
-                            bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
-
-                            // bitmap.copyPixelsFromBuffer(argbBuffer)
-                            runOnUiThread {
-                                Log.d("UIUpdate", "Updating ImageView on UI thread.")
-                                Log.d("BitmapInfo", "Bitmap dimensions: width=${bitmap.width}, height=${bitmap.height}")
-                                logPixelValues(argbBuffer, image.width, image.height, )
-                                logBitmapPixels(bitmap)
-                                try {
-                                    saveBitmapToMediaStore(this, bitmap, "captured_image_${System.currentTimeMillis()}.png")
-                                } catch (e: Exception) {
-                                    Log.e("BitmapSaveError", "Failed to save bitmap", e)
-                                }
+            setupImageAnalysis() // Configure image analysis
 
 
-                                processedImageView.setImageBitmap(bitmap)
-                            }
-                            processNextImage = false
-                        }
-                        image.close()
-                    })
-
-
-//                    it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { image ->
-//                        // Image processing logic here
-//                        val buffer = image.planes[0].buffer
-//                        val processedBuffer = NativeLib().procimage(buffer, image.width, image.height)
-//                        //val processedBitmap = byteBufferToBitmap(processedBuffer, image.width, image.height)
-//
-//                        runOnUiThread {
-//                            //processedImageView.setImageBitmap(processedBitmap)
-//                        }
-//                        image.close()
-//                    })
-                }
 
             try {
                 // Unbind use cases before rebinding
@@ -251,35 +185,12 @@ class MainActivity : ComponentActivity() {
                     this, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalysis)
             } catch (exc: Exception) {
                 // Handle exceptions, e.g., camera binding failed
+                Log.e("CameraXApp", "Use case binding failed", exc)
             }
         }, ContextCompat.getMainExecutor(this))
     }
 
-//    private fun startCamera() {
-//
-//
-//        val imageAnalysis = ImageAnalysis.Builder()
-//            .build()
-//            .also {
-//                it.setAnalyzer(ContextCompat.getMainExecutor(this), ImageAnalysis.Analyzer { image ->
-//                    // Image processing logic here
-//                    val buffer = image.planes[0].buffer
-//                    val width = image.width
-//                    val height = image.height
-//                    val processedBuffer =  NativeLib().procimage(buffer, width, height)
-//                    val processedBitmap = byteBufferToBitmap(processedBuffer, width, height)
-//                    // Convert processedBuffer back to image and set to ImageView
-//                    runOnUiThread {
-//                        // Update your ImageView with the new image
-//                        processedImageView.setImageBitmap(processedBitmap)
-//                    }
-//                    image.close()
-//                })
-//            }
-//
-//        // Bind the lifecycle of cameras to the lifecycle owner
-//        // CameraX.bindToLifecycle(this as LifecycleOwner, imageAnalysis)
-//    }
+
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
@@ -297,21 +208,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    SimcamTheme {
-//        Greeting("Android")
-//    }
-//}
+
 
 
 fun byteBufferToBitmap(buffer: ByteBuffer, width: Int, height: Int): Bitmap {
@@ -446,4 +343,18 @@ fun logBitmapPixels(bitmap: Bitmap) {
         val b = pixel and 0xff          // Blue component
         Log.d("BitmapPixels", "Pixel at ($x, $y): ARGB($a, $r, $g, $b)")
     }
+}
+
+fun rotateBitmapFromBuffer(buffer: ByteBuffer, width: Int, height: Int, rotationDegrees: Int): Bitmap {
+    buffer.rewind() // Rewind buffer before reading from it
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    bitmap.copyPixelsFromBuffer(buffer)
+
+    // Creating a new matrix for rotation
+    val matrix = Matrix().apply {
+        postRotate(rotationDegrees.toFloat())
+    }
+
+    // Returning a new bitmap rotated using the matrix
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
