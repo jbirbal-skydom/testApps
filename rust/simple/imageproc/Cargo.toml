@@ -5,7 +5,7 @@ edition = "2021"
 
 [features]
 default = []
-android = ["jni", "android_logger", "log"]
+android = ["jni", "android_logger", "log", "image"]
 with_image_util = ["image"]  # Enable the image crate when this feature is active
 
 
@@ -18,10 +18,12 @@ android_logger = {version =  "0.14.1", optional = true }
 log = {version =  "0.4", optional = true }
 
 
+
 [target.'cfg(target_os = "android")'.dependencies]
 jni = { version = "0.21.1", optional = false } # Ensure JNI is included for Android
 android_logger = {version =  "0.14.1", optional = false }
 log = {version =  "0.4", optional = false }
+image = { version = "0.25.1", optional = false }
 
 
 [lib]

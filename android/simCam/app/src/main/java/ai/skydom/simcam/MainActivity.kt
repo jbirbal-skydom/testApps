@@ -104,11 +104,13 @@ class MainActivity : ComponentActivity() {
 
                         if (processNextImage) {
                             runOnUiThread {
-                                val rgbaBuffer  = NativeLib().procimage(buffer, image.width, image.height)
+                                val rgbaBuffer  = NativeLib().procimage(buffer, image.imageInfo.rotationDegrees, image.width, image.height)
                                 logPixelValues(rgbaBuffer, image.width, image.height)
-                                val rotatedBitmap = rotateBitmapFromBuffer(rgbaBuffer, image.width, image.height, image.imageInfo.rotationDegrees)
-
-                                processedImageView.setImageBitmap(rotatedBitmap)
+                                // val rotatedBitmap = rotateBitmapFromBuffer(rgbaBuffer, image.width, image.height, image.imageInfo.rotationDegrees)
+                                buffer.rewind()
+                                val bitmap = Bitmap.createBitmap(image.height, image.width, Bitmap.Config.ARGB_8888)
+                                bitmap.copyPixelsFromBuffer(rgbaBuffer)
+                                processedImageView.setImageBitmap(bitmap)
                             }
                             processNextImage = false
                         }
@@ -325,7 +327,7 @@ class NativeLib {
     }
 
     // Declare a native method
-    external fun procimage(input: ByteBuffer, width: Int, height: Int): ByteBuffer
+    external fun procimage(input: ByteBuffer, rotation: Int, width: Int, height: Int): ByteBuffer
 }
 
 
