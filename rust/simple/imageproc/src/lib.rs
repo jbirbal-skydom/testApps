@@ -6,7 +6,7 @@ use log::{error, info, LevelFilter};
 use std::alloc::{alloc, dealloc, Layout};
 use std::slice;
 
-use image::{DynamicImage, GenericImageView, ImageBuffer, RgbaImage};
+
 #[cfg(target_os = "android")]
 extern crate jni;
 #[cfg(target_os = "android")]
@@ -91,16 +91,11 @@ pub extern "C" fn Java_ai_skydom_simcam_NativeLib_procimage(
 
     log_pixel_values(input_bytes, width, height);
 
-    // Rotate and process image based on rotation degrees
-    info!("Rotating: {}", rotation_degrees);
-    match rotate_image(input_bytes, width, height, rotation_degrees, size) {
-        Ok(rotated_data) => info!("Image rotated successfully!"),
-        Err(e) => info!("Error rotating image: {}", e),
-    }
+
 
     info!("Starting to process buffer of size: {}", size);
 
-    process_image(input_bytes, width, height);
+    // process_image(input_bytes, width, height);
 
     log_pixel_values(input_bytes, width, height);
 
@@ -116,26 +111,3 @@ pub extern "C" fn Java_ai_skydom_simcam_NativeLib_procimage(
     }
 }
 
-// Internal function for rotating an image
-fn rotate_image(input: *mut u8, width: i32, height: i32, rotation_degrees: i32, size: usize) -> Result<Vec<u8>, String> {
-    let buffer = unsafe { slice::from_raw_parts_mut(input, size) };
-
-    let img: RgbaImage = match ImageBuffer::from_raw(width as u32, height as u32, buffer.to_vec()) {
-        Some(img) => img,
-        None => return Err("Failed to create image buffer from raw data".to_string()),
-    };
-
-    let dyn_image = DynamicImage::ImageRgba8(img);
-    let rotated_img = match rotation_degrees {
-        90 => {dyn_image.rotate90()},
-        180 => dyn_image.rotate180(),
-        270 => dyn_image.rotate270(),
-        _ => dyn_image,
-    };
-    let rotated_buffer = rotated_img.to_rgba8().into_raw();
-unsafe {
-    std::ptr::copy_nonoverlapping(rotated_buffer.as_ptr(), input, rotated_buffer.len());
-}
-
-    Ok(rotated_buffer)
-}

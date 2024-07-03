@@ -10,18 +10,18 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/camera_preview"
-        app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/processed_image"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:scaleType="fitCenter" />
 
     <ImageView
         android:id="@+id/processed_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/processed_image"
+        android:scaleType="fitCenter"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintTop_toBottomOf="@id/camera_preview"
