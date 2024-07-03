@@ -95,7 +95,7 @@ pub extern "C" fn Java_ai_skydom_simcam_NativeLib_procimage(
 
     info!("Starting to process buffer of size: {}", size);
 
-    // process_image(input_bytes, width, height);
+    process_image(input_bytes, width, height);
 
     log_pixel_values(input_bytes, width, height);
 

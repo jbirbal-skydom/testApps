@@ -240,7 +240,7 @@ class MainActivity : ComponentActivity() {
 //                                bitmap.copyPixelsFromBuffer(rgbaBuffer)
                                 processedImageView.setImageBitmap(rotatedBitmap)
                             }
-                            processNextImage = false
+                            processNextImage = true
                         }
                     } catch (e: Exception) {
                         Log.e("ImageAnalysis", "Error processing image", e)
