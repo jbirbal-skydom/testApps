@@ -1,12 +1,12 @@
 use image;
 use imgproc; // Import your library
 
-use image::{ImageBuffer, RgbImage};
+use image::{ImageBuffer, RgbaImage};
 use imgproc::process_image;
 
 fn main() {
     let img_path = "D:\\Coding\\git\\testApps\\images\\logo.png"; // Specify the path to your image
-    let mut img = image::open(img_path).unwrap().to_rgb8(); // Open and convert the image to RGB8
+    let mut img = image::open(img_path).unwrap().to_rgba8(); // Open and convert the image to RGB8
 
     let (width, height) = img.dimensions();
     let raw_img = img.as_mut();
