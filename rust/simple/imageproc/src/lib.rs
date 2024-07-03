@@ -3,7 +3,6 @@
 use android_logger::{Config, FilterBuilder};
 #[cfg(target_os = "android")]
 use log::{error, info, LevelFilter};
-use std::alloc::{alloc, dealloc, Layout};
 use std::slice;
 
 
